@@ -5,43 +5,88 @@ require 'states_language_machine'
 require 'logger'
 require 'stringio'
 
+# Mock only what's necessary for testing
+module StatesLanguageMachine
+  # Mock StateMachine for testing that properly simulates failures
+  class TestStateMachine
+    def initialize(definition, format: :hash)
+      @definition = definition
+    end
+
+    def start_execution(input, name, context)
+      execution = Object.new
+
+      # Extract the expected output from the branch definition
+      output = extract_output_from_definition(@definition)
+
+      # Determine if this branch should fail based on its definition
+      should_fail = branch_should_fail?(@definition)
+
+      execution.define_singleton_method(:run_all) { }
+      execution.define_singleton_method(:succeeded?) { !should_fail }
+      execution.define_singleton_method(:output) { output }
+      execution.define_singleton_method(:error) { should_fail ? "Branch execution failed" : nil }
+      execution
+    end
+
+    private
+
+    def extract_output_from_definition(definition)
+      return {} unless definition['States']
+
+      # Find the first state that has a Result
+      definition['States'].each do |state_name, state_def|
+        if state_def['Result']
+          return state_def['Result']
+        end
+      end
+
+      # Fallback: return empty hash if no Result found
+      {}
+    end
+
+    def branch_should_fail?(definition)
+      return false unless definition['States']
+
+      # Check if any state in this branch is a Fail state
+      definition['States'].each do |state_name, state_def|
+        if state_def['Type'] == 'Fail'
+          return true
+        end
+      end
+
+      false
+    end
+  end
+end
+
 # Configure RSpec
 RSpec.configure do |config|
-  # Use the documentation formatter for detailed output
   config.formatter = :documentation
-
-  # Use color in STDOUT
   config.color = true
-
-  # Use color not only in STDOUT but also in pagers and files
   config.tty = true
-
-  # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
-
-  # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
 
-  # Add time helpers for wait state testing
-  config.around(:each) do |example|
-    # Allow time-based tests to run without actual long waits
-    if example.metadata[:skip_time_wait]
-      allow_any_instance_of(WaitState).to receive(:sleep)
-      example.run
-    else
-      example.run
+  # Mock the StateMachine class in parallel tests
+  config.before(:each) do
+    if described_class == StatesLanguageMachine::States::Parallel
+      stub_const('StatesLanguageMachine::StateMachine', StatesLanguageMachine::TestStateMachine)
     end
+  end
+
+  config.around(:each) do |example|
+    if example.metadata[:skip_time_wait] && defined?(StatesLanguageMachine::States::Wait)
+      allow_any_instance_of(StatesLanguageMachine::States::Wait).to receive(:sleep)
+    end
+    example.run
   end
 end
 
-# Load all support files
-support_files = Dir[File.join(__dir__, 'support', '**', '*.rb')]
-support_files.each { |f| require f }
-
-# Load all spec files
-spec_files = Dir[File.join(__dir__, '**', '*_spec.rb')]
-spec_files.each { |f| require f }
+# Load support files and specs
+Dir[File.join(__dir__, 'support', '**', '*.rb')].each { |f| require f }
+Dir[File.join(__dir__, '**', '*_spec.rb')].each { |f| require f }
