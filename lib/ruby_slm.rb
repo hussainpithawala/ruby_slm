@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require_relative "states_language_machine/version"
-require_relative "states_language_machine/errors"
-require_relative "states_language_machine/state_machine"
-require_relative "states_language_machine/state"
-require_relative "states_language_machine/execution"
+require_relative "ruby_slm/version"
+require_relative "ruby_slm/errors"
+require_relative "ruby_slm/state_machine"
+require_relative "ruby_slm/state"
+require_relative "ruby_slm/execution"
 
 # State implementations
-require_relative "states_language_machine/states/base"
-require_relative "states_language_machine/states/task"
-require_relative "states_language_machine/states/choice"
-require_relative "states_language_machine/states/wait"
-require_relative "states_language_machine/states/parallel"
-require_relative "states_language_machine/states/pass"
-require_relative "states_language_machine/states/succeed"
-require_relative "states_language_machine/states/fail"
+require_relative "ruby_slm/states/base"
+require_relative "ruby_slm/states/task"
+require_relative "ruby_slm/states/choice"
+require_relative "ruby_slm/states/wait"
+require_relative "ruby_slm/states/parallel"
+require_relative "ruby_slm/states/pass"
+require_relative "ruby_slm/states/succeed"
+require_relative "ruby_slm/states/fail"
 
 module StatesLanguageMachine
   class << self

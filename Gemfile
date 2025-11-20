@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in states_language_machine.gemspec
+# Specify your gem's dependencies in ruby_slm.gemspec
 gemspec
 
 gem "irb"

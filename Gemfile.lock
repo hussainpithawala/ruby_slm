@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    states_language_machine (0.1.0)
+    ruby_slm (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -51,7 +51,7 @@ DEPENDENCIES
   irb
   rake (~> 13.0)
   rspec (~> 3.0)
-  states_language_machine!
+  ruby_slm!
 
 BUNDLED WITH
    2.7.2

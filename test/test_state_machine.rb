@@ -1,4 +1,4 @@
-require 'states_language_machine'
+require 'ruby_slm'
 
 # From YAML file
 # state_machine = StatesLanguageMachine.from_yaml_file('workflow.yaml')

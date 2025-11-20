@@ -10,7 +10,7 @@ task default: :spec
 desc "Open a console with the gem loaded"
 task :console do
   require "irb"
-  require "states_language_machine"
+  require "ruby_slm"
   ARGV.clear
   IRB.start
 end

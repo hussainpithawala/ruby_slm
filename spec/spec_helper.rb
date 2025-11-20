@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'states_language_machine'
+require 'ruby_slm'
 require 'logger'
 require 'stringio'
 
