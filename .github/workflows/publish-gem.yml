@@ -25,6 +25,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
+      - name: Unfreeze Bundler version
+        run: bundle config set frozen false
 
       - name: Install dependencies
         run: bundle install
