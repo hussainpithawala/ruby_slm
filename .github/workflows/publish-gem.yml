@@ -135,9 +135,9 @@ jobs:
       - name: Build gem
         run: gem build ruby_slm.gemspec
 
-      - name: Publish to GitHub Package Registry
-        run: |
-          gem push --key github --host https://rubygems.pkg.github.com/${{ github.repository_owner }} *.gem
+#      - name: Publish to GitHub Package Registry
+#        run: |
+#          gem push --key github --host https://rubygems.pkg.github.com/${{ github.repository_owner }} *.gem
 
       - name: Verify GPR publication
         run: |
@@ -157,7 +157,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: '3.4.7'
           bundler-cache: true
 
       - name: Install security scanner

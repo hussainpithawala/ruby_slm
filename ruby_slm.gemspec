@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/hussainpithawala/ruby_slm"
-  spec.metadata["changelog_uri"] = "https://github.com/your-username/ruby_slm/releases"
+  spec.metadata["changelog_uri"] = "https://github.com/hussainpithawala/ruby_slm/releases"
   spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/ruby_slm" # This will auto-update
 
   # Specify which files should be added to the gem when it is released.
