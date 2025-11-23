@@ -2,6 +2,8 @@ PATH
   remote: .
   specs:
     ruby_slm (0.1.0)
+      jsonpath (~> 1.1, >= 1.1.5)
+      securerandom (~> 0.4.1)
 
 GEM
   remote: https://rubygems.org/
@@ -46,6 +48,7 @@ GEM
     securerandom (0.4.1)
     stringio (3.1.8)
     tsort (0.2.0)
+    yard (0.9.37)
 
 PLATFORMS
   ruby
@@ -58,6 +61,7 @@ DEPENDENCIES
   rspec (~> 3.0)
   ruby_slm!
   securerandom (~> 0.4.1)
+  yard (~> 0.9.0)
 
 BUNDLED WITH
    2.7.2
