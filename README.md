@@ -2,7 +2,7 @@
 
 A powerful, flexible state machine implementation for Ruby that's compatible with AWS Step Functions state language. Define complex workflows using YAML/JSON and execute them with local Ruby methods or external resources.
 
-[![Gem Version](https://badge.fury.io/rb/ruby_slm.svg)](https://badge.fury.io/rb/ruby_slm)
+[![Gem Version](https://badge.fury.io/rb/ruby_slm.svg)](https://rubygems.org/gems/ruby_slm/versions/0.1.1)
 [![Ruby](https://img.shields.io/badge/Ruby-3.4+-red.svg)](https://ruby-lang.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
