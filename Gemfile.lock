@@ -53,11 +53,11 @@ PLATFORMS
 
 DEPENDENCIES
   irb
-  jsonpath
+  jsonpath (~> 1.1, >= 1.1.5)
   rake (~> 13.0)
   rspec (~> 3.0)
   ruby_slm!
-  securerandom
+  securerandom (~> 0.4.1)
 
 BUNDLED WITH
    2.7.2

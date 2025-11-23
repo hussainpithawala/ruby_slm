@@ -9,5 +9,5 @@ gem "irb"
 gem "rake", "~> 13.0"
 
 gem "rspec", "~> 3.0"
-gem "jsonpath"
-gem "securerandom"
+gem 'jsonpath', '~> 1.1', '>= 1.1.5'
+gem 'securerandom', '~> 0.4.1'

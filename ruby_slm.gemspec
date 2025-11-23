@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "Executes Amazon states language based state machine expressed in YAML files"
   spec.homepage = "https://github.com/hussainpithawala/ruby_slm"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.4.7"
+  spec.required_ruby_version = ">= 3.4"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
