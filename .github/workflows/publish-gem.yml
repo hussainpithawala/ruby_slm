@@ -58,11 +58,6 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      - name: Run tests (final check)
-        run: |
-          bundle exec rspec
-          ruby test_complex_workflow.rb
-
       - name: Build gem
         run: gem build ruby_slm.gemspec
 

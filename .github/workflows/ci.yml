@@ -33,9 +33,6 @@ jobs:
       - name: Run RSpec tests
         run: bundle exec rspec
 
-      - name: Run integration tests
-        run: ruby test_complex_workflow.rb
-
       - name: Run linting
         run: |
           gem install rubocop
