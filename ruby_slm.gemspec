@@ -17,6 +17,8 @@ Gem::Specification.new do |spec|
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/hussainpithawala/ruby_slm"
+  spec.metadata["changelog_uri"] = "https://github.com/your-username/ruby_slm/releases"
+  spec.metadata["documentation_uri"] = "https://rubydoc.info/gems/ruby_slm" # This will auto-update
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -36,4 +38,10 @@ Gem::Specification.new do |spec|
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
+  # Dependencies
+  spec.add_dependency 'jsonpath', '~> 1.1', '>= 1.1.5'
+  spec.add_dependency 'securerandom', '~> 0.4.1'
+  spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "yard", "~> 0.9.0" # For documentation
 end

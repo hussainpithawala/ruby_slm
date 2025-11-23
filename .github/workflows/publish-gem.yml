@@ -1,0 +1,187 @@
+# .github/workflows/publish-gem.yml
+
+name: Publish Ruby Gem
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby-version: ['3.4']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run tests
+        run: bundle exec rspec
+
+      - name: Run complex workflow test
+        run: ruby test_complex_workflow.rb
+
+  build-and-push:
+    name: Build and Push Gem
+    runs-on: ubuntu-latest
+    needs: test
+
+    # Only run on release events or manual trigger
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run tests (final check)
+        run: |
+          bundle exec rspec
+          ruby test_complex_workflow.rb
+
+      - name: Build gem
+        run: gem build ruby_slm.gemspec
+
+      - name: Show gem info
+        run: |
+          echo "Built gem files:"
+          ls -la *.gem
+          echo "Gem details:"
+          gem spec *.gem name version summary
+
+      - name: Store gem artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruby-slm-gem
+          path: "*.gem"
+          retention-days: 5
+
+      - name: Publish to RubyGems
+        run: gem push *.gem
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
+      - name: Verify publication
+        run: |
+          echo "Waiting for gem to be available..."
+          sleep 30
+          gem fetch ruby_slm --version $(gem spec *.gem version | tr -d '\n')
+          echo "✅ Gem published successfully!"
+
+      - name: Create success comment (on release)
+        if: github.event_name == 'release'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🎉 Gem published successfully!\n\n**Version:** ${{ github.event.release.tag_name }}\n**Release:** ${{ github.event.release.html_url }}\n\nYou can now install it with:\n\`\`\`bash\ngem install ruby_slm\n\`\`\``
+            })
+
+  # Optional: Publish to GitHub Package Registry as well
+  publish-to-gpr:
+    name: Publish to GitHub Package Registry
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      packages: write
+      contents: read
+
+    # Only run on release events or manual trigger
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@users.noreply.github.com"
+
+      - name: Configure gem for GPR
+        run: |
+          mkdir -p ~/.gem
+          echo -e "---\n:github: Bearer ${{ secrets.GITHUB_TOKEN }}" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+
+      - name: Build gem
+        run: gem build ruby_slm.gemspec
+
+      - name: Publish to GitHub Package Registry
+        run: |
+          gem push --key github --host https://rubygems.pkg.github.com/${{ github.repository_owner }} *.gem
+
+      - name: Verify GPR publication
+        run: |
+          echo "Gem published to GitHub Package Registry"
+          echo "Install with: gem install ruby_slm --source https://rubygems.pkg.github.com/${{ github.repository_owner }}"
+
+  # Security scan for the gem
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install security scanner
+        run: gem install bundle-audit brakeman
+
+      - name: Audit dependencies
+        run: bundle audit check --update
+
+      - name: Security scan (brakeman)
+        run: brakeman -q -w2
+
+      - name: Check for common vulnerabilities
+        run: |
+          echo "Checking for common gem security issues..."
+          # Check for hardcoded secrets
+          if git log -p | grep -i "password\\|secret\\|key\\|token" | grep -v "GITHUB_TOKEN" | grep -v "RUBYGEMS_API_KEY"; then
+            echo "⚠️  Potential secrets found in commit history"
+            exit 1
+          fi

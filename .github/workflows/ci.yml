@@ -1,0 +1,71 @@
+# .github/workflows/ci.yml
+
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+obs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby-version: ['3.0', '3.1', '3.2', '3.3']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run RSpec tests
+        run: bundle exec rspec
+
+      - name: Run integration tests
+        run: ruby test_complex_workflow.rb
+
+      - name: Run linting
+        run: |
+          gem install rubocop
+          rubocop --format simple
+
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Build gem
+        run: gem build ruby_slm.gemspec
+
+      - name: Verify gem structure
+        run: |
+          echo "Verifying gem structure..."
+          gem spec *.gem > /dev/null
+          echo "✅ Gem structure is valid"
+
+      - name: Install and test gem
+        run: |
+          gem install *.gem
+          ruby -r ruby_slm -e "puts '✅ Gem loads successfully'"
