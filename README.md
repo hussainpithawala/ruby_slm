@@ -69,7 +69,7 @@ States:
     Resource: method:send_confirmation
     End: true
     ResultPath: $.confirmation_result
-1. ```
+```
 
 2. Implement Your Business Logic
 ```ruby
@@ -112,7 +112,7 @@ class OrderProcessor
     }
   end
 end
-2. ```
+```
 
 3. Execute the Workflow
 ```ruby
@@ -144,7 +144,7 @@ execution.run_all
 
 puts "Status: #{execution.status}" # => "succeeded"
 puts "Output: #{execution.output}"
-3. ```
+```
 
 ## State Types
 ### Task State
