@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [ main ]
 
-obs:
+jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
